@@ -19,6 +19,7 @@ from django.conf.urls import url
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    url(r'^api/auth/', include('authentication.urls', namespace='authentication'))
+    url(r'^api/auth/', include('authentication.urls', namespace='authentication')),
+    url(r'^api/booking/', include('booking.urls', namespace='booking')),
 
 ]
