@@ -11,3 +11,11 @@ class BookingFilter(FilterSet):
     class Meta:
         model = Booking
         fields = ('datetime_from', 'datetime_to', 'room', 'booked_by')
+
+class RoomFilter(FilterSet):
+    datetime_from = DateTimeFilter(field_name='booking__datetime_from', lookup_expr='gt')
+    datetime_to = DateTimeFilter(field_name='booking__datetime_to', lookup_expr='lt')
+
+    class Meta:
+        model = Room
+        fields = ('datetime_from', 'datetime_to')

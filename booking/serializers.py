@@ -9,10 +9,6 @@ from .models import Booking, Room
 User = get_user_model()
 
 
-class RoomSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Room
-        fields = ('id', 'number', 'name')
 
 
 class BookingSerializer(serializers.ModelSerializer):
@@ -42,3 +38,9 @@ class BookingSerializer(serializers.ModelSerializer):
             raise ValidationError(f'Бронь на номер с id={intersected_bookings.first().pk} пересекается с указанными датами')
         else:
             return attrs
+
+class RoomSerializer(serializers.ModelSerializer):
+    bookings = BookingSerializer(many=True, read_only=True)
+    class Meta:
+        model = Room
+        fields = ('id', 'number', 'name', 'bookings')
