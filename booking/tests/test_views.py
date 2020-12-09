@@ -69,11 +69,25 @@ class CreateBookingTest(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
-    def test_invalid_booking_creation(self):
+    def test_invalid_booking_creation_with_intersected_dates(self):
         """дата брони пересекается с датой другой брони"""
         data = {
             'datetime_from': '2020-12-01T12:00:00+0000',
             'datetime_to': '2020-12-01T20:00:00+0000',
+            'room': self.room.pk
+        }
+        response = self.client.post(
+            reverse(f'booking:default:bookings-list'),
+            **self.headers, data=data, format='json'
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_invalid_booking_creation_with_bad_date_ordering(self):
+        """дата окончания брони раньше даты начала брони"""
+        data = {
+            'datetime_from': '2020-12-01T20:00:00+0000',
+            'datetime_to': '2020-12-01T10:00:00+0000',
             'room': self.room.pk
         }
         response = self.client.post(
