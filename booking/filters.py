@@ -13,8 +13,8 @@ class BookingFilter(FilterSet):
         fields = ('datetime_from', 'datetime_to', 'room', 'booked_by')
 
 class RoomFilter(FilterSet):
-    datetime_from = DateTimeFilter(field_name='booking__datetime_from', lookup_expr='gt')
-    datetime_to = DateTimeFilter(field_name='booking__datetime_to', lookup_expr='lt')
+    datetime_from = DateTimeFilter(field_name='booking__datetime_from', lookup_expr='gte')
+    datetime_to = DateTimeFilter(field_name='booking__datetime_to', lookup_expr='lte')
 
     class Meta:
         model = Room
