@@ -1,7 +1,8 @@
-from django.db import models
 from django.contrib.auth import get_user_model
+from django.db import models
 
 User = get_user_model()
+
 
 # Create your models here.
 
@@ -12,6 +13,7 @@ class Room(models.Model):
     @property
     def bookings(self):
         return self.booking_set.all()
+
 
 class Booking(models.Model):
     datetime_from = models.DateTimeField(verbose_name='Начало брони', null=False, blank=False)
