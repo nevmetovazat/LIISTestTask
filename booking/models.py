@@ -6,7 +6,7 @@ User = get_user_model()
 # Create your models here.
 
 class Room(models.Model):
-    number = models.PositiveIntegerField(null=False, blank=False, verbose_name='Номер комнаты')
+    number = models.PositiveIntegerField(null=False, blank=False, unique=True, verbose_name='Номер комнаты')
     name = models.CharField(max_length=64, null=False, blank=False, verbose_name='Имя комнаты')
 
     @property

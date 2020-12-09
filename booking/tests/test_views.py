@@ -40,3 +40,45 @@ class GetSingleBookingTest(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data, serializer.data)
+
+class CreateBookingTest(APITestCase):
+    def setUp(self) -> None:
+        user = User.objects.create_user(username, mail, password)
+        self.client.login(username=username, password=password)
+        response = self.client.post(reverse('authentication:token_obtain_pair'), data={
+            'username': username, 'password': password})
+        self.token = response.data['access']
+        self.headers = {'HTTP_AUTHORIZATION': 'Bearer ' + self.token}
+
+        self.room = Room.objects.create(number=11, name='Переговорная')
+        self.booking = Booking.objects.create(datetime_from='2020-12-01T12:00:00+0000',
+                                         datetime_to='2020-12-01T19:00:00+0000',
+                                         room=self.room,
+                                         booked_by=user)
+
+    def test_valid_booking_creation(self):
+        data = {
+            'datetime_from': '2020-12-02T12:00:00+0000',
+            'datetime_to': '2020-12-02T19:00:00+0000',
+            'room': self.room.pk
+        }
+        response = self.client.post(
+            reverse(f'booking:default:bookings-list'),
+            **self.headers, data=data, format='json'
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+    def test_invalid_booking_creation(self):
+        """дата брони пересекается с датой другой брони"""
+        data = {
+            'datetime_from': '2020-12-01T12:00:00+0000',
+            'datetime_to': '2020-12-01T20:00:00+0000',
+            'room': self.room.pk
+        }
+        response = self.client.post(
+            reverse(f'booking:default:bookings-list'),
+            **self.headers, data=data, format='json'
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)

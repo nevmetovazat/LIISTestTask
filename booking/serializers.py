@@ -19,7 +19,7 @@ class BookingSerializer(serializers.ModelSerializer):
     datetime_from = serializers.DateTimeField(required=True)
     datetime_to = serializers.DateTimeField(required=True)
     room = serializers.PrimaryKeyRelatedField(required=True, queryset=Room.objects.all())
-    booked_by = serializers.PrimaryKeyRelatedField(default=serializers.CurrentUserDefault(), read_only=True)
+    booked_by = serializers.HiddenField(default=serializers.CurrentUserDefault())
 
     class Meta:
         model = Booking
