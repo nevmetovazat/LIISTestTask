@@ -25,7 +25,11 @@ class BookingSerializer(serializers.ModelSerializer):
         """Проверяет для одной комнаты:
         datetime_from пересекается с другой датой брони
         datetime_to пересекается с другой датой брони
+        datetime_to < datetime_from
         """
+
+        if attrs['datetime_to'] < attrs['datetime_from']:
+            raise ValidationError('Дата окончания брони не может быть раньше даты начала брони. ')
 
         intersected_bookings = Booking.objects.filter(Q(room=attrs['room']) &
                                                     ((Q(datetime_from__lte=attrs['datetime_from']) & Q(
@@ -35,7 +39,7 @@ class BookingSerializer(serializers.ModelSerializer):
                                                          datetime_to__gte=attrs['datetime_to'])))
                                                     )
         if intersected_bookings.first() is not None:
-            raise ValidationError(f'Бронь на номер с id={intersected_bookings.first().pk} пересекается с указанными датами')
+            raise ValidationError(f'Бронь на номер с id={intersected_bookings.first().room.pk} пересекается с указанными датами')
         else:
             return attrs
 
